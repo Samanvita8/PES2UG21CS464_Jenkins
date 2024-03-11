@@ -26,10 +26,11 @@ pipeline {
              echo 'deploy' // Placeholder echo statement
         }
     }
+  }  
     post {
       failure {
         error 'Pipeline failed'
       }
     }
-  }
+  
 }
