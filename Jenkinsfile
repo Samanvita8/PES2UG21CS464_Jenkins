@@ -1,36 +1,35 @@
 pipeline {
-    agent any
-    
-    stages {
-        stage('Build') {
-            steps {
-                // Compile the .cpp file using shell script
-                sh 'g++ -o output hello.cpp'
-            }
-        }
-        stage('Test') {
-            steps {
-                // Print output of .cpp file using shell script
-                sh './output'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // Your deployment steps here
-            }
+  agent any
+
+  stages {
+    stage('Clone repository') {
+        steps{
+            checkout([$class: 'GitSCM',
+            branches: [[name: '*/main']],
+            userRemoteConfigs: [[url: 'https://github.com/Samanvita8/Jenkins.git']]])
         }
     }
-    
+    stage('Build') {
+        steps{
+            build 'PES2UG21CS464-1'
+            sh 'g++ main.cpp -o output'
+        }
+    }
+    stage('Test') {
+        steps {
+            sh './output' // Presumably running the compiled executable
+        }
+      
+    }
+    stage('Deploy') {
+        steps {
+             echo 'deploy' // Placeholder echo statement
+        }
+    }
     post {
-        // Execute this block after every stage
-        always {
-            // Display 'pipeline failed' in case of any errors
-            catchError {
-                echo 'Pipeline succeeded'
-            }
-            catchError {
-                echo 'Pipeline failed'
-            }
-        }
+      failure {
+        echo 'Pipeline failed'
+      }
     }
+  }
 }
